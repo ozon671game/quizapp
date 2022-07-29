@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import 'main.dart';
@@ -56,6 +57,14 @@ class _LastScreenState extends State<LastScreen> {
   }
 
   save() {
-    //todo
+    var db = FirebaseFirestore.instance;
+    db.collection('data');
+    db.collection('data').doc().set({
+      'correct_count': '${widget.correctCount} / ${widget.count}',
+      'Category': widget.category,
+      'Difficult': widget.difficulty,
+      'Time': timeQuiz.toString(),
+      'Date now': DateTime.now().toString(),
+    });
   }
 }
