@@ -58,7 +58,6 @@ class _LastScreenState extends State<LastScreen> {
 
   save() {
     var db = FirebaseFirestore.instance;
-    db.collection('data');
     db.collection('data').doc().set({
       'correct_count': '${widget.correctCount} / ${widget.count}',
       'Category': widget.category,
