@@ -1,9 +1,11 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart';
 import 'package:quizapp/last.dart';
 
+import 'bloc_state/quiz_bloc.dart';
 import 'main.dart';
 
 class Quiz extends StatefulWidget {
@@ -69,30 +71,43 @@ class _QuizState extends State<Quiz> {
     }
   }
 
-  @override
-  void initState() {
-    getData();
-    super.initState();
-  }
+  // @override
+  // void initState() {
+  //   getData();
+  //   super.initState();
+  // }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(),
-      body: !isLoaded
-          ? const Center(child: CircularProgressIndicator())
-          : PageView.builder(
+      body: BlocBuilder<QuizCubit, List<SingleQuestion>>(
+        // body: BlocBuilder<LoadPageBloc, QuizStateBloc>(
+        // bloc: LoadPageBloc(apiKey, widget.category, widget.difficulty),
+        bloc: QuizCubit(apiKey, widget.category, widget.difficulty)..getData(apiKey, widget.category, widget.difficulty),
+        builder: (context, snapshot) {
+          // print(snapshot.isLoaded);
+          // print(snapshot.questionsList);
+          print('setstate');
+          if(snapshot.isNotEmpty){
+            print(snapshot.length);
+          }
+          questionsList = snapshot;
+          return snapshot.isEmpty
+              ? const Center(child: CircularProgressIndicator())
+              : PageView.builder(
               controller: controller,
               physics: const NeverScrollableScrollPhysics(),
               itemCount: questionsList.length,
               itemBuilder: (context, index) {
                 return singlePage(questionsList[index]);
-              }),
+              });
+        },
+      ),
     );
   }
 
   Widget singlePage(SingleQuestion question) {
-    int curAnswerIndex = 0;
     List<Answer> answersList = List.generate(question.answers.length, (index) {
       return Answer(
           text: question.answers[index],
@@ -129,11 +144,11 @@ class _QuizState extends State<Quiz> {
           context,
           MaterialPageRoute(
               builder: (context) => LastScreen(
-                    category: widget.category,
-                    difficulty: widget.difficulty,
-                    correctCount: correctCount,
-                    count: questionsList.length,
-                  )));
+                category: widget.category,
+                difficulty: widget.difficulty,
+                correctCount: correctCount,
+                count: questionsList.length,
+              )));
     }
     pageIndex++;
     controller.jumpToPage(pageIndex);

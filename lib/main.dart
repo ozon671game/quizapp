@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:bloc/bloc.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -13,27 +14,35 @@ final stopwatch = Stopwatch();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(const MyApp());
+  BlocOverrides.runZoned(
+        () => runApp(const MyApp()),
+    blocObserver: SimpleBlocObserver(),
+  );
+}
+
+class SimpleBlocObserver extends BlocObserver {
+
+  @override
+  void onTransition(Bloc bloc, Transition transition) {
+    super.onTransition(bloc, transition);
+    print(transition);
+  }
+
+  @override
+  void onError(BlocBase bloc, Object error, StackTrace stackTrace) {
+    print(error);
+    super.onError(bloc, error, stackTrace);
+  }
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
         primarySwatch: Colors.blue,
       ),
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
@@ -64,7 +73,7 @@ class _MyHomePageState extends State<MyHomePage> {
   int categoryIndex = 0;
   int difficultyIndex = 0;
 
-  static List<String> categories = [
+  static const List<String> categories = [
     'linux',
     'bash',
     'uncategorized',
@@ -75,7 +84,7 @@ class _MyHomePageState extends State<MyHomePage> {
     'devops',
   ];
 
-  static List<String> difficulties = [
+  static const List<String> difficulties = [
     'Easy',
     'Medium',
     'Hard',
@@ -85,83 +94,78 @@ class _MyHomePageState extends State<MyHomePage> {
     showCupertinoModalPopup<void>(
         context: context,
         builder: (BuildContext context) => Container(
-              height: 216,
-              padding: const EdgeInsets.only(top: 6.0),
-              // The Bottom margin is provided to align the popup above the system navigation bar.
-              margin: EdgeInsets.only(
-                bottom: MediaQuery.of(context).viewInsets.bottom,
-              ),
-              // Provide a background color for the popup.
-              color: CupertinoColors.systemBackground.resolveFrom(context),
-              // Use a SafeArea widget to avoid system overlaps.
-              child: SafeArea(
-                top: false,
-                child: CupertinoPicker(
-                  magnification: 1.22,
-                  squeeze: 1.2,
-                  useMagnifier: true,
-                  // This is called when selected item is changed.
-                  onSelectedItemChanged: (int index) {
-                    setState(() {
-                      categoryIndex = index;
-                    });
-                  },
-                  itemExtent: 25,
-                  children:
-                      List<Widget>.generate(categories.length, (int index) {
-                    return Center(
-                      child: Text(
-                        categories[index],
-                      ),
-                    );
-                  }),
-                ),
-              ),
-            ));
+          height: 216,
+          padding: const EdgeInsets.only(top: 6.0),
+          // The Bottom margin is provided to align the popup above the system navigation bar.
+          margin: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
+          // Provide a background color for the popup.
+          color: CupertinoColors.systemBackground.resolveFrom(context),
+          // Use a SafeArea widget to avoid system overlaps.
+          child: SafeArea(
+            top: false,
+            child: CupertinoPicker(
+              magnification: 1.22,
+              squeeze: 1.2,
+              useMagnifier: true,
+              // This is called when selected item is changed.
+              onSelectedItemChanged: (int index) {
+                setState(() {
+                  categoryIndex = index;
+                });
+              },
+              itemExtent: 25,
+              children:
+              List<Widget>.generate(categories.length, (int index) {
+                return Center(
+                  child: Text(
+                    categories[index],
+                  ),
+                );
+              }),
+            ),
+          ),
+        ));
   }
 
   void showDifficultyDialog() {
     showCupertinoModalPopup<void>(
         context: context,
         builder: (BuildContext context) => Container(
-              height: 216,
-              padding: const EdgeInsets.only(top: 6.0),
-              // The Bottom margin is provided to align the popup above the system navigation bar.
-              margin: EdgeInsets.only(
-                bottom: MediaQuery.of(context).viewInsets.bottom,
-              ),
-              // Provide a background color for the popup.
-              color: CupertinoColors.systemBackground.resolveFrom(context),
-              // Use a SafeArea widget to avoid system overlaps.
-              child: SafeArea(
-                top: false,
-                child: CupertinoPicker(
-                  magnification: 1.22,
-                  squeeze: 1.2,
-                  useMagnifier: true,
-                  // This is called when selected item is changed.
-                  onSelectedItemChanged: (int index) {
-                    setState(() {
-                      difficultyIndex = index;
-                    });
-                  },
-                  itemExtent: 25,
-                  children:
-                      List<Widget>.generate(difficulties.length, (int index) {
-                    return Center(
-                      child: Text(
-                        difficulties[index],
-                      ),
-                    );
-                  }),
-                ),
-              ),
-            ));
-  }
-
-  @override
-  void initState() {
-    super.initState();
+          height: 216,
+          padding: const EdgeInsets.only(top: 6.0),
+          // The Bottom margin is provided to align the popup above the system navigation bar.
+          margin: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
+          // Provide a background color for the popup.
+          color: CupertinoColors.systemBackground.resolveFrom(context),
+          // Use a SafeArea widget to avoid system overlaps.
+          child: SafeArea(
+            top: false,
+            child: CupertinoPicker(
+              magnification: 1.22,
+              squeeze: 1.2,
+              useMagnifier: true,
+              // This is called when selected item is changed.
+              onSelectedItemChanged: (int index) {
+                setState(() {
+                  difficultyIndex = index;
+                });
+              },
+              itemExtent: 25,
+              children:
+              List<Widget>.generate(difficulties.length, (int index) {
+                return Center(
+                  child: Text(
+                    difficulties[index],
+                  ),
+                );
+              }),
+            ),
+          ),
+        ));
   }
 
   @override
@@ -224,9 +228,9 @@ class _MyHomePageState extends State<MyHomePage> {
                       context,
                       MaterialPageRoute(
                           builder: (context) => Quiz(
-                                difficulty: difficulties[difficultyIndex],
-                                category: categories[categoryIndex],
-                              )));
+                            difficulty: difficulties[difficultyIndex],
+                            category: categories[categoryIndex],
+                          )));
                 },
                 child: Text('Lets Go'))
           ],
