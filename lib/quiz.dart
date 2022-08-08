@@ -18,6 +18,7 @@ class Quiz extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    stopwatch.start();
     List<SingleQuestion> questionsList;
     return Scaffold(
       appBar: AppBar(),

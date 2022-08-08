@@ -50,7 +50,6 @@ class QuizCubit extends Cubit<List<SingleQuestion>> {
         questionsList.add(SingleQuestion(
             text: e['question'], correctIndex: index, answers: val));
       }
-      stopwatch.start();
       emit(questionsList);
     }
   }
