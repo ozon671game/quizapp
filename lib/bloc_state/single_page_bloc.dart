@@ -42,6 +42,7 @@ class SinglePageBloc extends Cubit<MyState>{
   _reBuildPage() {
     if(currentIndex >= questionsList.length){
       _goNextScreen();
+      return;
     }
     emit(initWidgets(questionsList[currentIndex]));
   }

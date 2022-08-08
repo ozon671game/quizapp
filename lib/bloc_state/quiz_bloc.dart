@@ -10,7 +10,7 @@ class QuizCubit extends Cubit<List<SingleQuestion>> {
   final String apiKey, category, difficulty;
   QuizCubit(this.apiKey, this.category, this.difficulty): super([]);
 
-  void getData(apiKey, category, difficulty) async {
+  getData() async {
     List<SingleQuestion> questionsList = [];
     var url = Uri.parse(
         'https://quizapi.io/api/v1/questions?apiKey=$apiKey&category=$category&difficulty=$difficulty&limit=10');
