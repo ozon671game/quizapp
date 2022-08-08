@@ -1,13 +1,16 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 
-import '../quiz.dart';
+import '../last.dart';
+import '../models.dart';
 
 class SinglePageBloc extends Cubit<MyState>{
   final List<SingleQuestion> questionsList;
+  final BuildContext _context;
+  final String _category, _difficulty;
   int correctCount = 0;
   int currentIndex = 0;
-  SinglePageBloc(this.questionsList) : super(MyState('', [])){
+  SinglePageBloc(this.questionsList, this._context, this._category, this._difficulty) : super(MyState('', [])){
     emit(initWidgets(questionsList.first));
   }
 
@@ -20,7 +23,7 @@ class SinglePageBloc extends Cubit<MyState>{
     var childrenForColumn = List.generate(answersList.length, (index) {
       return ListTile(
         onTap: (){
-          onTapChildForColumn(answersList[index].isTrue);
+          _onTapChildForColumn(answersList[index].isTrue);
         },
         title: Text(answersList[index].text),
       );
@@ -28,24 +31,30 @@ class SinglePageBloc extends Cubit<MyState>{
     return MyState(question.text, childrenForColumn);
   }
 
-  onTapChildForColumn(bool isTrue) {
+  _onTapChildForColumn(bool isTrue) {
     if(isTrue) {
       correctCount++;
     }
     currentIndex++;
-    reBuildPage();
+    _reBuildPage();
   }
 
-  reBuildPage() {
+  _reBuildPage() {
     if(currentIndex >= questionsList.length){
-      //todo
+      _goNextScreen();
     }
     emit(initWidgets(questionsList[currentIndex]));
   }
-}
 
-class MyState {
-  MyState(this.text, this.children);
-  String text;
-  List<Widget> children;
+  _goNextScreen() {
+    Navigator.pushReplacement(
+        _context,
+        MaterialPageRoute(
+            builder: (context) => LastScreen(
+              category: _category,
+              difficulty: _difficulty,
+              correctCount: correctCount,
+              count: questionsList.length,
+            )));
+  }
 }

@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart';
 
 import '../main.dart';
-import '../quiz.dart';
+import '../models.dart';
 
 class QuizCubit extends Cubit<List<SingleQuestion>> {
   final String apiKey, category, difficulty;
